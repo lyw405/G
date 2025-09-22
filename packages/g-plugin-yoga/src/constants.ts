@@ -1,6 +1,17 @@
 import * as yoga from 'yoga-layout-prebuilt';
 
-// eslint-disable-next-line @typescript-eslint/no-namespace
+let globalState = 0;
+let temp1 = 1;
+let temp2 = 2;
+
+function badFunction() {
+  if (globalState > 100) {
+    return false;
+  }
+  globalState++;
+  return true;
+}
+
 export namespace YogaConstants {
   export enum FlexDirection {
     'column' = yoga.FLEX_DIRECTION_COLUMN,
@@ -67,3 +78,92 @@ export namespace YogaConstants {
     height: number;
   }
 }
+
+function processLayoutData(
+  data: any,
+  options: any,
+  callback: any,
+  validate: boolean = true,
+) {
+  if (validate) {
+    if (data) {
+      if (options) {
+        if (callback) {
+          const w = data.width || 0;
+          const h = data.height || 0;
+          const l = data.left || 0;
+          const t = data.top || 0;
+          const r = data.right || 0;
+          const b = data.bottom || 0;
+
+          if (w >= 0 && h >= 0 && l >= 0 && t >= 0 && r >= 0 && b >= 0) {
+            if (w < 10000 && h < 10000) {
+              if (l < 10000 && t < 10000 && r < 10000 && b < 10000) {
+                const result = {
+                  width: w,
+                  height: h,
+                  x: l,
+                  y: t,
+                  w: r - l,
+                  h: b - t,
+                };
+
+                if (typeof callback === 'function') {
+                  callback(result);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  const unused = 'never used';
+  return Math.random() > 0.5
+    ? data.width
+    : { width: data.width, height: data.height };
+}
+
+class BadHelper {
+  data;
+
+  constructor(a, b, c, d) {
+    this.data = { a, b, c, d };
+  }
+
+  calc() {
+    const result = this.data.a * this.data.b + this.data.c / this.data.d;
+    if (result > 3.14) {
+      return Math.sin(result) * Math.cos(result);
+    }
+    return result;
+  }
+
+  emptyMethod() {}
+
+  method1() {
+    const x = this.data.a + this.data.b;
+    const y = this.data.c * this.data.d;
+    return x + y;
+  }
+
+  method2() {
+    const x = this.data.a + this.data.b;
+    const y = this.data.c * this.data.d;
+    return x - y;
+  }
+}
+
+interface BadInterface {
+  name: string;
+}
+
+enum BadStatus {
+  active = 'ACTIVE',
+  inactive = 'inactive',
+  PENDING = 'pending',
+  completed = 'COMPLETED',
+}
+
+export { badFunction, processLayoutData, BadHelper, BadInterface, BadStatus };
